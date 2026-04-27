@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Reportes</title>
+  <title>reportes</title>
 
   <style>
     body {
@@ -54,33 +54,34 @@
     import {
       getFirestore,
       collection,
-      getDocs,
-      query,
-      orderBy
+      getDocs
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
-      apiKey: "TU_API_KEY",
-      authDomain: "revista-motos.firebaseapp.com",
-      projectId: "revista-motos",
-      storageBucket: "revista-motos.firebasestorage.app",
-      messagingSenderId: "554552666157",
-      appId: "1:554552666157:web:5ca3ad332829931436f0a4"
+      apiKey: "AIzaSyDmttXAGdJfkjgDj-YHo5HT2mWZ_6u8RNg",
+      authDomain: "revista-motos-e2b8c.firebaseapp.com",
+      projectId: "revista-motos-e2b8c",
+      storageBucket: "revista-motos-e2b8c.firebasestorage.app",
+      messagingSenderId: "204349065643",
+      appId: "1:204349065643:web:a5c40738565f0faa4aaaee",
+      measurementId: "G-HNRJ2BP202"
     };
 
+    // Inicializar Firebase
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
     const lista = document.getElementById("lista");
 
-    async function cargarReportes() {
+    async function cargarreportes() {
       try {
-        const q = query(
-          collection(db, "Reportes"),
-          orderBy("Fecha_Accidente", "desc")
-        );
+        // Leer colección sin orderBy para evitar errores de índice
+        const querySnapshot = await getDocs(collection(db, "reportes"));
 
-        const querySnapshot = await getDocs(q);
+        if (querySnapshot.empty) {
+          lista.innerHTML = "<p>No hay reportes registrados.</p>";
+          return;
+        }
 
         querySnapshot.forEach((doc) => {
           const data = doc.data();
@@ -99,7 +100,7 @@
 
             <strong>Lesiones:</strong> ${data.Lesiones || "No disponible"} <br>
 
-            <strong>Ubicación:</strong> ${data["Ubicación"] || "No disponible"} <br>
+            <strong>Ubicación:</strong> ${data.Ubicacion || data["Ubicación"] || "No disponible"} <br>
 
             <strong>Fecha del accidente:</strong> ${data.Fecha_Accidente || "No disponible"} <br>
 
@@ -109,7 +110,7 @@
                 ? data.Fecha_Registro.toDate().toLocaleDateString()
                 : "No disponible"
             }
-            <br>
+            <br><br>
 
             ${
               data.Link
@@ -122,12 +123,12 @@
         });
 
       } catch (error) {
-        console.error("Error al cargar reportes:", error);
+        console.error("Error al leer Firestore:", error);
         lista.innerHTML = "<p>Error al cargar los reportes.</p>";
       }
     }
 
-    cargarReportes();
+    cargarreportes();
 
   </script>
 
